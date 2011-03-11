@@ -7,4 +7,10 @@ module varcomment
 d !< variable d
   integer,pointer :: as(:,:)&!< \e variable as
 ,bs !< \b variable bs
+
+
+  integer :: i1=1, &!< variable with init1
+i2=2&  !< variable with init2
+, i3 = 3 !< variable with init3
+
 end module varcomment

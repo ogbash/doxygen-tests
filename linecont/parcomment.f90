@@ -17,7 +17,8 @@ d !< variable d
   subroutine testme2(a&!< variable a
 ,b ,  &  !< variable b
  c,&!< variable c
-as, bs, d ) !< variable d
+as, bs, d & !< variable d
+ )
 
   integer a,b,c,d
   intent(in) :: a,b,c,d
