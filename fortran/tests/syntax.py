@@ -7,7 +7,7 @@ class label_endsub(base.FortranTestCase):
     """Allow label before end statement, see bug 626476.
     """
 
-    def runTest(self):
+    def checkXML(self):
         file = self.getFile("label_endsub.f90")
 
         sub = self.getSubprogram(file, "tst")

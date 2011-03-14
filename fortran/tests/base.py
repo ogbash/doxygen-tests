@@ -13,6 +13,12 @@ class FortranTestCase(unittest.TestCase):
         self.docs = {}
         self.path = "xml"
 
+    def runTest(self):
+        try:
+            self.checkXML()
+        except TestException, e:
+            self.fail(e)
+
     def getDoc(self, filename):
         "Get XML document for the file."
         if self.docs.has_key(filename):

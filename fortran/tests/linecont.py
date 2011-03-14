@@ -4,7 +4,7 @@ import base
 class parcomment_f90(base.FortranTestCase):
     "Line continuations within subroutine parameters."
 
-    def runTest(self):
+    def checkXML(self):
         self.module = self.getModule("parcomment")
         self.check_testme1()
         self.check_testme2()
@@ -33,7 +33,7 @@ class parcomment_f90(base.FortranTestCase):
 class varcomment_f90(base.FortranTestCase):
     "Line continuations within module variables."
 
-    def runTest(self):
+    def checkXML(self):
         varcomment = self.getModule("varcomment")
         
         for varName in ["a", "b", "c", "as", "bs", "d"]:
@@ -52,7 +52,7 @@ class varcomment_f90(base.FortranTestCase):
 class parcomment_f(base.FortranTestCase):
     "Line continuations within subroutine parameters (fixed form)."
 
-    def runTest(self):
+    def checkXML(self):
         file = self.getFile("parcomment.f")
         example = self.getSubprogram(file, "example")
 
