@@ -65,3 +65,17 @@ class parcomment_f(base.FortranTestCase):
         desc = self.getParamDescription(example, "ierr")
         self.assertEqual(desc.getContent().strip(), "[out] error code")
 
+class fixed_f(base.FortranTestCase):
+    "Different symbols for line continuation in fixed form."
+
+    def checkXML(self):
+        file = self.getFile("fixed.f")
+        functions = file.xpathEval("sectiondef[@kind='func']/memberdef")
+        self.assertEqual(len(functions), 35)
+
+        # every function has 2 parameters
+        for n in range(0,10)+map(chr,range(ord('A'),ord('X')+1)):
+            name = "foo%s"%n
+            sub = self.getSubprogram(file, name)
+            params = sub.xpathEval("param")
+            self.assertEquals(len(params),2)
