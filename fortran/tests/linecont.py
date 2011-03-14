@@ -1,5 +1,4 @@
 
-import unittest
 import base
 
 class parcomment_f90(base.FortranTestCase):
