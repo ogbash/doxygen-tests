@@ -27,6 +27,7 @@ class FortranTestCase(unittest.TestCase):
     def getFileDoc(self, name):
         "Get XML document for Fortran file."
 
+        name = name.replace("_", "__") # doxygen doubles underscores (?)
         parts = name.split(".")
         basename = ".".join(parts[:-1])
         ext = parts[-1]
@@ -93,7 +94,12 @@ class FortranTestCase(unittest.TestCase):
 
         moduleName = module.xpathEval("compoundname")[0].getContent()
         intfNameFull = "%s::%s" % (moduleName,intfName)
-        intfRef = module.xpathEval("*[self::innerclass='%s']" % intfNameFull)[0]
+        try:
+            intfRef = module.xpathEval("*[self::innerclass='%s']" % 
+                                       intfNameFull)[0]
+        except IndexError, e:
+            raise TestException("Interface '%s' not found in module '%s'" %
+                                (intfNameFull,moduleName))
         refid = intfRef.prop('refid')
         intfDoc = self.getDoc("%s.xml" % refid)
         intf = intfDoc.xpathEval("doxygen/compounddef[@id='%s'][compoundname='%s']" % 
