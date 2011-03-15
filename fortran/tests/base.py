@@ -80,13 +80,22 @@ class FortranTestCase(unittest.TestCase):
         "Get parameter description element in subprogram element."
 
         desc = subprogram.xpathEval("param[defname='%s']/briefdescription"%paramName)
-        self.assertEqual(len(desc),1)
+        if len(desc)==0:
+            # try detailed description
+            param = subprogram.xpathEval("detaileddescription/para/parameterlist/parameteritem[parameternamelist/parametername='%s']" % paramName)
+            if len(param) > 0:
+                desc = param[0].xpathEval("parameterdescription")
+
         return desc[0]
 
     def getModuleVariable(self, module, varName):
         "Get variable entity."
         var = module.xpathEval("sectiondef[@kind='var']/memberdef[@kind='variable'][name='%s']"%varName)
         return var[0]
+
+    def getDescription(self, element):
+        "Get brief description."
+        return element.xpathEval("briefdescription")[0]
 
     def getVarDescription(self, module, varName):
         "Get variable description entity in module."
