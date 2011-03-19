@@ -93,9 +93,13 @@ class FortranTestCase(unittest.TestCase):
         var = module.xpathEval("sectiondef[@kind='var']/memberdef[@kind='variable'][name='%s']"%varName)
         return var[0]
 
-    def getDescription(self, element):
+    def getBriefDescription(self, element):
         "Get brief description."
         return element.xpathEval("briefdescription")[0]
+
+    def getInbodyDescription(self, element):
+        "Get inbody description."
+        return element.xpathEval("inbodydescription")[0]
 
     def getVarDescription(self, module, varName):
         "Get variable description entity in module."
