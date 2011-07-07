@@ -40,6 +40,12 @@ class FortranTestCase(unittest.TestCase):
                                      stdout=subprocess.PIPE,
                                      stderr=subprocess.PIPE)
                 stdout, stderr = s.communicate()
+                # check doxygen error
+                errlines = stderr.split("\n")
+                errlines = filter(lambda l: l.find("Error in file")>=0, errlines)
+                if len(errlines)>0:
+                    self.fail("; ".join(errlines))
+                # check that everything is translated
                 self.checkXML()
             except TestException, e:
                 self.fail(e)
