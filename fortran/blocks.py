@@ -9,6 +9,8 @@ class interface_spec_f90(base.FortranTestCase):
     block.
     """
 
+    FILES = ["blocks/interface_spec.f90"]
+
     def checkXML(self):
         module = self.getModule("interface_spec")
 
@@ -30,6 +32,8 @@ class interface_gen_f90(base.FortranTestCase):
     under this name in documentation.
     """
 
+    FILES = ["blocks/interface_gen.f90"]
+
     def checkXML(self):
         module = self.getModule("interface_gen")
         
@@ -49,6 +53,8 @@ class interface_abst_f90(base.FortranTestCase):
     and multiple interfaces may be listed in one interface block.
     """
 
+    FILES = ["blocks/interface_abst.f90"]
+
     def checkXML(self):
         module = self.getModule("interface_abst")
 
@@ -67,6 +73,8 @@ class interface_op_f90(base.FortranTestCase):
 
     END INTERFACE OPERATOR in fortran 90 crashes Doxygen
     """
+
+    FILES = ["blocks/interface_op.f90"]
 
     def checkXML(self):
         module = self.getModule("interface_op")

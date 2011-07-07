@@ -2,22 +2,49 @@
 import unittest
 import libxml2
 import os.path
+import tempfile
+import shutil
+import subprocess
 
 class TestException (Exception):
     pass
 
 class FortranTestCase(unittest.TestCase):
+    FILES = []
 
     def __init__(self, name):
         unittest.TestCase.__init__(self, name)
         self.docs = {}
         self.path = "xml"
 
+    def setUp(self):
+        self.tmpdir = tempfile.mkdtemp(prefix="doxytest")
+        # copy files
+        moduleDir = os.path.dirname(__file__)
+        paths = ["Doxyfile"]
+        paths.extend(self.FILES)
+        for path in paths:
+            shutil.copyfile(os.path.join(moduleDir, path), 
+                            os.path.join(self.tmpdir, os.path.basename(path)))
+
+    def tearDown(self):
+        shutil.rmtree(self.tmpdir)
+
     def runTest(self):
+        # change directory
+        origdir = os.getcwd()
+        os.chdir(self.tmpdir)
         try:
-            self.checkXML()
-        except TestException, e:
-            self.fail(e)
+            try:
+                s = subprocess.Popen(["doxygen"], 
+                                     stdout=subprocess.PIPE,
+                                     stderr=subprocess.PIPE)
+                stdout, stderr = s.communicate()
+                self.checkXML()
+            except TestException, e:
+                self.fail(e)
+        finally:
+            os.chdir(origdir)
 
     def getDoc(self, filename):
         "Get XML document for the file."

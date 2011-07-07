@@ -4,6 +4,8 @@ import base
 class parcomment_f90(base.FortranTestCase):
     "Line continuations within subroutine parameters."
 
+    FILES = ["linecont/parcomment.f90"]
+
     def checkXML(self):
         self.module = self.getModule("parcomment")
         self.check_testme1()
@@ -33,6 +35,8 @@ class parcomment_f90(base.FortranTestCase):
 class varcomment_f90(base.FortranTestCase):
     "Line continuations within module variables."
 
+    FILES = ["linecont/varcomment.f90"]
+
     def checkXML(self):
         varcomment = self.getModule("varcomment")
         
@@ -52,6 +56,8 @@ class varcomment_f90(base.FortranTestCase):
 class parcomment_f(base.FortranTestCase):
     "Line continuations within subroutine parameters (fixed form)."
 
+    FILES = ["linecont/parcomment.f"]
+
     def checkXML(self):
         file = self.getFile("parcomment.f")
         example = self.getSubprogram(file, "example")
@@ -67,6 +73,8 @@ class parcomment_f(base.FortranTestCase):
 
 class fixed_f(base.FortranTestCase):
     "Different symbols for line continuation in fixed form."
+
+    FILES = ["linecont/fixed.f"]
 
     def checkXML(self):
         file = self.getFile("fixed.f")

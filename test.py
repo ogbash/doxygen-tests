@@ -1,6 +1,5 @@
 #! /usr/bin/env python
 import sys
-import tests
 
 if len(sys.argv)<2:
     sys.stderr.write("Usage: %s <test name>, where the name is module, class or method path.\n" % sys.argv[0])

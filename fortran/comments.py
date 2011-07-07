@@ -2,6 +2,7 @@
 import base
 
 class backward_f90(base.FortranTestCase):
+    FILES = ["comments/backward.f90"]
 
     def checkXML(self):
         file = self.getFile("backward.f90")
@@ -10,6 +11,7 @@ class backward_f90(base.FortranTestCase):
         self.assertEqual(desc.getContent().strip(), "unused variable")
 
 class outofplace_f90(base.FortranTestCase):
+    FILES = ["comments/outofplace.f90"]
 
     def checkXML(self):
         file = self.getFile("outofplace.f90")
@@ -23,6 +25,8 @@ class outofplace_f90(base.FortranTestCase):
 
 class inbody_f90(base.FortranTestCase):
     "In-body comments."
+    FILES = ["comments/inbody.f90"]
+
     def checkXML(self):
         file = self.getFile("inbody.f90")
         sub = self.getSubprogram(file, "inbody_test")

@@ -1,8 +1,10 @@
 import base
 
-class qsign(base.FortranTestCase):
+class qsigns(base.FortranTestCase):
     """Question sign inside string.
     """
+
+    FILES = ["strings/qsigns.f90"]
 
     def checkXML(self):
         print "RUNNING"
