@@ -1,7 +1,6 @@
+import doxyrtest as rtest
 
-import base
-
-class parcomment_f90(base.FortranTestCase):
+class parcomment_f90(rtest.FortranTestCase):
     "Line continuations within subroutine parameters."
 
     FILES = ["linecont/parcomment.f90"]
@@ -32,7 +31,7 @@ class parcomment_f90(base.FortranTestCase):
             paramdesc = self.getParamDescription(testme2, varName)
             self.assertEqual(paramdesc.getContent().strip(),"variable %s"%varName)
 
-class varcomment_f90(base.FortranTestCase):
+class varcomment_f90(rtest.FortranTestCase):
     "Line continuations within module variables."
 
     FILES = ["linecont/varcomment.f90"]
@@ -53,7 +52,7 @@ class varcomment_f90(base.FortranTestCase):
             self.assertEqual(desc.getContent().strip(), "variable with init%d"%init)
 
 
-class parcomment_f(base.FortranTestCase):
+class parcomment_f(rtest.FortranTestCase):
     "Line continuations within subroutine parameters (fixed form)."
 
     FILES = ["linecont/parcomment.f"]
@@ -71,7 +70,7 @@ class parcomment_f(base.FortranTestCase):
         desc = self.getParamDescription(example, "ierr")
         self.assertEqual(desc.getContent().strip(), "[out] error code")
 
-class fixed_f(base.FortranTestCase):
+class fixed_f(rtest.FortranTestCase):
     "Different symbols for line continuation in fixed form."
 
     FILES = ["linecont/fixed.f"]

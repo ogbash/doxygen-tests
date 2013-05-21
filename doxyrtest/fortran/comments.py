@@ -1,7 +1,6 @@
+import doxyrtest as rtest
 
-import base
-
-class backward_f90(base.FortranTestCase):
+class backward_f90(rtest.FortranTestCase):
     FILES = ["comments/backward.f90"]
 
     def checkXML(self):
@@ -10,7 +9,7 @@ class backward_f90(base.FortranTestCase):
         desc = self.getParamDescription(sub,"x")
         self.assertEqual(desc.getContent().strip(), "unused variable")
 
-class outofplace_f90(base.FortranTestCase):
+class outofplace_f90(rtest.FortranTestCase):
     FILES = ["comments/outofplace.f90"]
 
     def checkXML(self):
@@ -23,7 +22,7 @@ class outofplace_f90(base.FortranTestCase):
         pdesc = self.getParamDescription(sub,"b")
         self.assertEqual(pdesc.getContent().strip(), "2nd parameter")
 
-class inbody_f90(base.FortranTestCase):
+class inbody_f90(rtest.FortranTestCase):
     "In-body comments."
     FILES = ["comments/inbody.f90"]
 

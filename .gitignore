@@ -1,6 +1,7 @@
 *~
 *.o
 *.mod
+*.pyc
 /*.tmp
 /latex
 /out

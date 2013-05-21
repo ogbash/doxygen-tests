@@ -1,7 +1,7 @@
 
-import base
+import doxyrtest as rtest
 
-class interface_spec_f90(base.FortranTestCase):
+class interface_spec_f90(rtest.FortranTestCase):
     """See bug 637610.
 
     Specific interfaces are listed in an INTERFACE block without a (generic)
@@ -25,7 +25,7 @@ class interface_spec_f90(base.FortranTestCase):
             self.assertTrue(self.getSubprogramPublic(intf, name) is not None)
         
 
-class interface_gen_f90(base.FortranTestCase):
+class interface_gen_f90(rtest.FortranTestCase):
     """See bug 637610.
 
     Generic INTERFACEs have a generic name, all INTERFACEs should be listed
@@ -46,7 +46,7 @@ class interface_gen_f90(base.FortranTestCase):
             # subprogram with name is present
             self.assertTrue(self.getSubprogramPublic(intf, name) is not None)
         
-class interface_abst_f90(base.FortranTestCase):
+class interface_abst_f90(rtest.FortranTestCase):
     """See bug 637610.
 
     Like specific interfaces, ABSTRACT interfaces do not have a generic name
@@ -68,7 +68,7 @@ class interface_abst_f90(base.FortranTestCase):
             # its name is _name_
             self.assertTrue(self.getSubprogramPublic(intf, name) is not None)
         
-class interface_op_f90(base.FortranTestCase):
+class interface_op_f90(rtest.FortranTestCase):
     """See bug 630582.
 
     END INTERFACE OPERATOR in fortran 90 crashes Doxygen

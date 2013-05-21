@@ -31,16 +31,16 @@ if len(args)!=1:
 testname = args[0]
 
 # extract options
-import fortran.base as base
+import doxyrtest as rtest
 if opts.has_key('-d'):
-    base.config['outdir'] = opts['-d']
-    base.config['save'] = True
+    rtest.config['outdir'] = opts['-d']
+    rtest.config['save'] = True
 if opts.has_key('--fg'):
-    base.config['fg'] = True
+    rtest.config['fg'] = True
 
 import unittest
 loader = unittest.defaultTestLoader
-suite = loader.loadTestsFromName(testname)
+suite = loader.loadTestsFromName("doxyrtest."+testname)
 
 runner = unittest.TextTestRunner(verbosity=2)
 runner.run(suite)

@@ -1,9 +1,9 @@
 
-import base
+import doxyrtest as rtest
 
 # general syntax
 
-class label_endsub(base.FortranTestCase):
+class label_endsub(rtest.FortranTestCase):
     """Allow label before end statement, see bug 626476.
     """
 

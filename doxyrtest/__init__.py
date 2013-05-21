@@ -14,6 +14,8 @@ class TestException (Exception):
     pass
 
 class FortranTestCase(unittest.TestCase):
+    BASEPATH = os.path.abspath(os.path.join(os.path.dirname(__file__),".."))
+    TESTSPATH = os.path.join(BASEPATH,"tests","fortran")
     FILES = []
 
     def __init__(self, name):
@@ -28,11 +30,10 @@ class FortranTestCase(unittest.TestCase):
             os.mkdir(self.wrkdir)
         LOG.debug("Created %s", self.wrkdir)
         # copy files
-        moduleDir = os.path.dirname(__file__)
-        paths = ["Doxyfile"]
-        paths.extend(self.FILES)
+        paths = [os.path.join(self.BASEPATH,"conf","Doxyfile")]
+        paths.extend(map(lambda p: os.path.join(self.TESTSPATH,p), self.FILES))
         for path in paths:
-            fromFilepath = os.path.join(moduleDir, path)
+            fromFilepath = os.path.join(self.TESTSPATH, path)
             toFilepath = os.path.join(self.wrkdir, os.path.basename(path))
             LOG.debug("Copying %s to %s", fromFilepath, toFilepath)
             shutil.copyfile(fromFilepath, toFilepath)
@@ -197,3 +198,4 @@ class FortranTestCase(unittest.TestCase):
                                  (refid,intfNameFull))
         return intf[0]
 
+import fortran

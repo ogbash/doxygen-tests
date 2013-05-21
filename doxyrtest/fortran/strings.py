@@ -1,6 +1,6 @@
-import base
+import doxyrtest as rtest
 
-class qsigns(base.FortranTestCase):
+class qsigns(rtest.FortranTestCase):
     """Question sign inside string.
     """
 
@@ -9,7 +9,7 @@ class qsigns(base.FortranTestCase):
     def checkXML(self):
         file = self.getFile("qsigns.f90")
 
-class nobackslash(base.FortranTestCase):
+class nobackslash(rtest.FortranTestCase):
     "Backslashes inside a string."
     FILES = ["strings/nobackslash.f90"]
 
