@@ -2,7 +2,5 @@
 *.o
 *.mod
 /*.tmp
-/html
 /latex
-/xml
-
+/out

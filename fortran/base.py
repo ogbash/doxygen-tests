@@ -1,3 +1,5 @@
+import logging
+LOG = logging.getLogger(__name__)
 
 import unittest
 import libxml2
@@ -5,6 +7,8 @@ import os.path
 import tempfile
 import shutil
 import subprocess
+
+config = dict()
 
 class TestException (Exception):
     pass
@@ -18,37 +22,66 @@ class FortranTestCase(unittest.TestCase):
         self.path = "xml"
 
     def setUp(self):
-        self.tmpdir = tempfile.mkdtemp(prefix="doxytest")
+        # create work directory
+        self.wrkdir = config.get('outdir',tempfile.mkdtemp(prefix="doxytest"))
+        if not os.path.exists(self.wrkdir):
+            os.mkdir(self.wrkdir)
+        LOG.debug("Created %s", self.wrkdir)
         # copy files
         moduleDir = os.path.dirname(__file__)
         paths = ["Doxyfile"]
         paths.extend(self.FILES)
         for path in paths:
-            shutil.copyfile(os.path.join(moduleDir, path), 
-                            os.path.join(self.tmpdir, os.path.basename(path)))
+            fromFilepath = os.path.join(moduleDir, path)
+            toFilepath = os.path.join(self.wrkdir, os.path.basename(path))
+            LOG.debug("Copying %s to %s", fromFilepath, toFilepath)
+            shutil.copyfile(fromFilepath, toFilepath)
 
     def tearDown(self):
-        shutil.rmtree(self.tmpdir)
+        if not config.get('save', False):
+            LOG.debug("Removing '%s'", self.wrkdir)
+            shutil.rmtree(self.wrkdir)
+        else:
+            LOG.info("Directory '%s' not removed", self.wrkdir)
 
     def runTest(self):
         # change directory
         origdir = os.getcwd()
-        os.chdir(self.tmpdir)
+        LOG.debug("Changing directory to %s", self.wrkdir)
+        os.chdir(self.wrkdir)
         try:
             try:
+                LOG.debug("Running doxygen")
+                # setup output streams
+                if config.get('fg', False):
+                    stdout=None
+                    stderr=None
+                else:
+                    stdout=subprocess.PIPE
+                    stderr=subprocess.PIPE
+                # run
                 s = subprocess.Popen(["doxygen"], 
-                                     stdout=subprocess.PIPE,
-                                     stderr=subprocess.PIPE)
+                                     stdout=stdout,
+                                     stderr=stderr)
                 stdout, stderr = s.communicate()
+                if LOG.isEnabledFor(logging.DEBUG):
+                    LOG.debug("Output files in ./xml are %s", os.listdir('xml'))
                 # check doxygen error
-                errlines = stderr.split("\n")
-                errlines = filter(lambda l: l.find("Error in file")>=0, errlines)
-                if len(errlines)>0:
-                    self.fail("; ".join(errlines))
+                if stderr is not None:
+                    errlines = stderr.split("\n")
+                    errlines = filter(lambda l: l.find("Error in file")>=0, errlines)
+                    if len(errlines)>0:
+                        self.fail("; ".join(errlines))
                 # check that everything is translated
                 self.checkXML()
             except TestException, e:
-                self.fail(e)
+                LOG.debug("Error %s", e)
+                raise
+                #self.fail(e)
+            except Exception, e:
+                LOG.debug("Error %s", e)
+                raise
+
         finally:
             os.chdir(origdir)
 
@@ -56,10 +89,15 @@ class FortranTestCase(unittest.TestCase):
         "Get XML document for the file."
         if self.docs.has_key(filename):
             return self.docs[filename]
+        filepath = os.path.join(self.path, filename)
+        # check that the file exists
+        if not os.path.exists(filepath):
+            raise TestException("File %s does not exist" % (filepath))
         try:
-            doc = libxml2.parseFile(os.path.join(self.path,filename))
+            LOG.debug("Reading file %s" % filepath)
+            doc = libxml2.parseFile(filepath)
         except Exception, e:
-            raise TestException("XML parse of file '%s' failed: %s",filename, str(e))
+            raise TestException("XML parse of file '%s' failed: %s" %(filename, str(e)))
         self.docs[filename] = doc
         return doc
 
@@ -77,13 +115,13 @@ class FortranTestCase(unittest.TestCase):
         "Get XML document for Fortran module."
 
         name = name.replace("_", "__") # doxygen doubles underscores (?)
-        filename = "namespace%s.xml" % name
+        filename = "class%s.xml" % name
         return self.getDoc(filename)
     
     def getModule(self, name):
         "Get Fortran module XML element from its document."
         doc = self.getModuleDoc(name)
-        modules = doc.xpathEval("doxygen/compounddef[@kind='namespace'][compoundname='%s']"%name)
+        modules = doc.xpathEval("doxygen/compounddef[@kind='module'][compoundname='%s']"%name)
         self.assertEqual(len(modules),1)
         return modules[0]
 
@@ -98,14 +136,14 @@ class FortranTestCase(unittest.TestCase):
     def getSubprogram(self, compound, subprogramName):
         "Find subprogram XML element in module or file element."
 
-        subprograms = compound.xpathEval("sectiondef[@kind='func']/memberdef[@kind='function'][name='%s']"%subprogramName)
-        self.assertEqual(len(subprograms),1)
+        subprograms = compound.xpathEval("sectiondef[@kind='func']/memberdef[@kind='function'][name='%s']"%subprogramName.lower())
+        self.assertEqual(len(subprograms),1, "%s not found" % subprogramName.lower())
         return subprograms[0]
 
     def getSubprogramPublic(self, compound, subprogramName):
         "Find subprogram XML element in public-func section of the interface."
 
-        subprograms = compound.xpathEval("sectiondef[@kind='public-func']/memberdef[@kind='function'][name='%s']"%subprogramName)
+        subprograms = compound.xpathEval("sectiondef[@kind='public-func']/memberdef[@kind='function'][name='%s']"%subprogramName.lower())
         self.assertEqual(len(subprograms),1)
         return subprograms[0]
 
@@ -123,7 +161,8 @@ class FortranTestCase(unittest.TestCase):
 
     def getModuleVariable(self, module, varName):
         "Get variable entity."
-        var = module.xpathEval("sectiondef[@kind='var']/memberdef[@kind='variable'][name='%s']"%varName)
+        var = module.xpathEval("sectiondef[@kind='public-attrib']/memberdef[@kind='variable'][name='%s']"%varName.lower())
+        self.assertEqual(len(var),1, "Module variable '%s' not found" % (varName))
         return var[0]
 
     def getBriefDescription(self, element):
@@ -145,7 +184,7 @@ class FortranTestCase(unittest.TestCase):
         "Get Fortran interface."
 
         moduleName = module.xpathEval("compoundname")[0].getContent()
-        intfNameFull = "%s::%s" % (moduleName,intfName)
+        intfNameFull = "%s::%s" % (moduleName.lower(),intfName.lower())
         try:
             intfRef = module.xpathEval("*[self::innerclass='%s']" % 
                                        intfNameFull)[0]

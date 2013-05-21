@@ -13,7 +13,7 @@ class parcomment_f90(base.FortranTestCase):
 
     def check_testme1(self):
         # testme1
-        testme1 = self.getSubprogram(self.module,"testme1")
+        testme1 = self.getSubprogramPublic(self.module,"testme1")
         argstring = testme1.xpathEval("argsstring")[0]
         self.assertEqual(argstring.getContent(), "(a, b, c, d)")
 
@@ -23,7 +23,7 @@ class parcomment_f90(base.FortranTestCase):
             self.assertEqual(paramdesc.getContent().strip(),"variable %s"%varName)
     def check_testme2(self):
         # testme2
-        testme2 = self.getSubprogram(self.module,"testme2")
+        testme2 = self.getSubprogramPublic(self.module,"testme2")
         argstring = testme2.xpathEval("argsstring")[0]
         self.assertEqual(argstring.getContent(), "(a, b, c, as, bs, d)")
 
