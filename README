@@ -3,9 +3,9 @@ Under development..., the rules and the layout may change.
 
  RUNNING TESTS
 It requires Python 2.5 and python-libxml2.
-In the root directory to run all tests or for specific tests:
-  ./test.py tests.blocks
-  ./test.py tests.blocks.interface_op_f90
+In the root directory to run all Fortran tests or specific test:
+  ./test.py fortran
+  ./test.py fortran.blocks.interface_op_f90
 
 This creates separate temporary directory for every test where test Fortran file and Doxyfile are copied. Doxygen is run in the directory and XML output is written to 'xml' subdirectory. Finally, corresponding Python test is executed. The temporary directory is deleted at the end.
 
