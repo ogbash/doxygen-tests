@@ -2,14 +2,16 @@ This is an attempt to create regression tests for Doxygen, primarly for Fortran 
 Under development..., the rules and the layout may change.
 
  RUNNING TESTS
-It requires Python 2.5 and python-libxml2. Doxygen must be run with Doxyfile, which generates XML output to 'xml' directory. This directory MUST be cleaned (deleted) every time test suite is executed, otherwise there may be false positives.
+It requires Python 2.5 and python-libxml2.
+In the root directory to run all tests or for specific tests:
+  ./test.py tests.blocks
+  ./test.py tests.blocks.interface_op_f90
 
-In fortran directory run:
-  doxygen Doxyfile
-  ./test tests
-to run all tests or for specific tests:
-  ./test tests.blocks
-  ./test tests.blocks.interface_op_f90
+This creates separate temporary directory for every test where test Fortran file and Doxyfile are copied. Doxygen is run in the directory and XML output is written to 'xml' subdirectory. Finally, corresponding Python test is executed. The temporary directory is deleted at the end.
+
+If you want to preserve and inspect the results use -d <outdir> command line argument to avoid temporary directory:
+  ./test.py -d out --fg fortran.comments.outofplace_f90
+The --fg also redirects Doxygen output to standard output. This directory is not cleaned (deleted) every time test is executed, so there may be false positives. You should clean it yourself when it is necessary.
 
  WRITING TESTS
 Place new Fortran file into one of the directories: syntax, blocks, linecont, or other. Update corresponding Python file in the 'tests' directory:
