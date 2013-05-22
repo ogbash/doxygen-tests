@@ -9,11 +9,21 @@ class backward_f90(rtest.FortranTestCase):
         desc = self.getParamDescription(sub,"x")
         self.assertEqual(desc.getContent().strip(), "unused variable")
 
-class outofplace_f90(rtest.FortranTestCase):
+class outofplace_f90_1(rtest.FortranTestCase):
+    FILES = ["comments/outofplace.f90"]
+    def checkXML(self):
+        file = self.getFile("outofplace.f90")
+        # no keyword specified
+        sub = self.getSubprogram(file, "f")
+        desc = self.getBriefDescription(sub)
+        self.assertEqual(desc.getContent().strip(), "no keyword function")
+
+class outofplace_f90_2(rtest.FortranTestCase):
     FILES = ["comments/outofplace.f90"]
 
     def checkXML(self):
         file = self.getFile("outofplace.f90")
+        # function keyword specified
         sub = self.getSubprogram(file, "f_proto")
         desc = self.getBriefDescription(sub)
         self.assertEqual(desc.getContent().strip(), "my function")
@@ -21,6 +31,15 @@ class outofplace_f90(rtest.FortranTestCase):
         self.assertEqual(pdesc.getContent().strip(), "1st parameter")
         pdesc = self.getParamDescription(sub,"b")
         self.assertEqual(pdesc.getContent().strip(), "2nd parameter")
+
+class outofplace_f90_3(rtest.FortranTestCase):
+    FILES = ["comments/outofplace.f90"]
+    def checkXML(self):
+        file = self.getFile("outofplace.f90")
+        mod = self.getModule("outofplace_m")
+        sub = self.getSubprogramPublic(mod, "s")
+        desc = self.getBriefDescription(sub)
+        self.assertEqual(desc.getContent().strip(), "module subroutine")
 
 class inbody_f90(rtest.FortranTestCase):
     "In-body comments."
