@@ -21,35 +21,41 @@ class FortranTestCase(unittest.TestCase):
     def __init__(self, name):
         unittest.TestCase.__init__(self, name)
         self.docs = {}
-        self.path = "xml"
 
-    def setUp(self):
+    @classmethod
+    def setUpClass(cls):
         # create work directory
-        self.wrkdir = config.get('outdir',tempfile.mkdtemp(prefix="doxytest"))
-        if not os.path.exists(self.wrkdir):
-            os.mkdir(self.wrkdir)
-        LOG.debug("Created %s", self.wrkdir)
+        cls.wrkdir = config.get('outdir',tempfile.mkdtemp(prefix="doxytest"))
+        if not os.path.exists(cls.wrkdir):
+            os.mkdir(cls.wrkdir)
+        LOG.debug("Created %s", cls.wrkdir)
         # copy files
-        paths = [os.path.join(self.BASEPATH,"conf","Doxyfile")]
-        paths.extend(map(lambda p: os.path.join(self.TESTSPATH,p), self.FILES))
+        paths = [os.path.join(cls.BASEPATH,"conf","Doxyfile")]
+        paths.extend(map(lambda p: os.path.join(cls.TESTSPATH,p), cls.FILES))
         for path in paths:
-            fromFilepath = os.path.join(self.TESTSPATH, path)
-            toFilepath = os.path.join(self.wrkdir, os.path.basename(path))
+            fromFilepath = os.path.join(cls.TESTSPATH, path)
+            toFilepath = os.path.join(cls.wrkdir, os.path.basename(path))
             LOG.debug("Copying %s to %s", fromFilepath, toFilepath)
             shutil.copyfile(fromFilepath, toFilepath)
 
-    def tearDown(self):
-        if not config.get('save', False):
-            LOG.debug("Removing '%s'", self.wrkdir)
-            shutil.rmtree(self.wrkdir)
-        else:
-            LOG.info("Directory '%s' not removed", self.wrkdir)
+        # run Doxygen
+        cls.doxygenError = None
+        cls._runDoxygen()
 
-    def runTest(self):
+    @classmethod
+    def tearDownClass(cls):
+        if not config.get('save', False):
+            LOG.debug("Removing '%s'", cls.wrkdir)
+            shutil.rmtree(cls.wrkdir)
+        else:
+            LOG.info("Directory '%s' not removed", cls.wrkdir)
+
+    @classmethod
+    def _runDoxygen(cls):
         # change directory
         origdir = os.getcwd()
-        LOG.debug("Changing directory to %s", self.wrkdir)
-        os.chdir(self.wrkdir)
+        LOG.debug("Changing directory to %s", cls.wrkdir)
+        os.chdir(cls.wrkdir)
         try:
             try:
                 LOG.debug("Running doxygen")
@@ -72,25 +78,22 @@ class FortranTestCase(unittest.TestCase):
                     errlines = stderr.split("\n")
                     errlines = filter(lambda l: l.find("Error in file")>=0, errlines)
                     if len(errlines)>0:
-                        self.fail("; ".join(errlines))
-                # check that everything is translated
-                self.checkXML()
-            except TestException, e:
-                LOG.debug("Error %s", e)
-                raise
-                #self.fail(e)
+                        cls.doxygenError = "; ".join(errlines)
             except Exception, e:
                 LOG.debug("Error %s", e)
-                raise
-
+                cls.doxygenError = sys.exc_info()
         finally:
             os.chdir(origdir)
 
     def getDoc(self, filename):
         "Get XML document for the file."
+        if self.doxygenError is not None:
+            self.fail(self.doxygenError)
+
         if self.docs.has_key(filename):
             return self.docs[filename]
-        filepath = os.path.join(self.path, filename)
+        
+        filepath = os.path.join(self.wrkdir, 'xml', filename)
         # check that the file exists
         if not os.path.exists(filepath):
             raise TestException("File %s does not exist" % (filepath))

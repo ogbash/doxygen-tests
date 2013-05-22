@@ -5,13 +5,9 @@ class parcomment_f90(rtest.FortranTestCase):
 
     FILES = ["linecont/parcomment.f90"]
 
-    def checkXML(self):
-        self.module = self.getModule("parcomment")
-        self.check_testme1()
-        self.check_testme2()
-
-    def check_testme1(self):
+    def test_me1(self):
         # testme1
+        self.module = self.getModule("parcomment")
         testme1 = self.getSubprogramPublic(self.module,"testme1")
         argstring = testme1.xpathEval("argsstring")[0]
         self.assertEqual(argstring.getContent(), "(a, b, c, d)")
@@ -20,8 +16,10 @@ class parcomment_f90(rtest.FortranTestCase):
         for varName in ["a", "b", "c", "d"]:
             paramdesc = self.getParamDescription(testme1, varName)
             self.assertEqual(paramdesc.getContent().strip(),"variable %s"%varName)
-    def check_testme2(self):
+
+    def test_me2(self):
         # testme2
+        self.module = self.getModule("parcomment")
         testme2 = self.getSubprogramPublic(self.module,"testme2")
         argstring = testme2.xpathEval("argsstring")[0]
         self.assertEqual(argstring.getContent(), "(a, b, c, as, bs, d)")
@@ -36,7 +34,7 @@ class varcomment_f90(rtest.FortranTestCase):
 
     FILES = ["linecont/varcomment.f90"]
 
-    def checkXML(self):
+    def runTest(self):
         varcomment = self.getModule("varcomment")
         
         for varName in ["a", "b", "c", "as", "bs", "d"]:
@@ -57,7 +55,7 @@ class parcomment_f(rtest.FortranTestCase):
 
     FILES = ["linecont/parcomment.f"]
 
-    def checkXML(self):
+    def runTest(self):
         file = self.getFile("parcomment.f")
         example = self.getSubprogram(file, "example")
 
@@ -75,7 +73,7 @@ class fixed_f(rtest.FortranTestCase):
 
     FILES = ["linecont/fixed.f"]
 
-    def checkXML(self):
+    def runTest(self):
         file = self.getFile("fixed.f")
         functions = file.xpathEval("sectiondef[@kind='func']/memberdef")
         self.assertEqual(len(functions), 35)

@@ -11,7 +11,7 @@ class interface_spec_f90(rtest.FortranTestCase):
 
     FILES = ["blocks/interface_spec.f90"]
 
-    def checkXML(self):
+    def runTest(self):
         module = self.getModule("interface_spec")
 
         for name in ["g", "f"]:
@@ -34,7 +34,7 @@ class interface_gen_f90(rtest.FortranTestCase):
 
     FILES = ["blocks/interface_gen.f90"]
 
-    def checkXML(self):
+    def runTest(self):
         module = self.getModule("interface_gen")
         
         intf = self.getInnerInterface(module, "f")
@@ -55,7 +55,7 @@ class interface_abst_f90(rtest.FortranTestCase):
 
     FILES = ["blocks/interface_abst.f90"]
 
-    def checkXML(self):
+    def runTest(self):
         module = self.getModule("interface_abst")
 
         for name in ["s", "f"]:
@@ -76,7 +76,7 @@ class interface_op_f90(rtest.FortranTestCase):
 
     FILES = ["blocks/interface_op.f90"]
 
-    def checkXML(self):
+    def runTest(self):
         module = self.getModule("interface_op")
 
         intf = self.getInnerInterface(module, "OPERATOR(*)")

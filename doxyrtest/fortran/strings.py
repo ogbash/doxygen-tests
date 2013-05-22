@@ -6,13 +6,13 @@ class qsigns(rtest.FortranTestCase):
 
     FILES = ["strings/qsigns.f90"]
 
-    def checkXML(self):
+    def runTest(self):
         file = self.getFile("qsigns.f90")
 
 class nobackslash(rtest.FortranTestCase):
     "Backslashes inside a string."
     FILES = ["strings/nobackslash.f90"]
 
-    def checkXML(self):
+    def runTest(self):
         file = self.getFile("nobackslash.f90")
 

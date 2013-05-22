@@ -9,7 +9,7 @@ class label_endsub(rtest.FortranTestCase):
 
     FILES = ["syntax/label_endsub.f90"]
 
-    def checkXML(self):
+    def runTest(self):
         file = self.getFile("label_endsub.f90")
 
         sub = self.getSubprogram(file, "tst")

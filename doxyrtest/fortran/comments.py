@@ -3,25 +3,26 @@ import doxyrtest as rtest
 class backward_f90(rtest.FortranTestCase):
     FILES = ["comments/backward.f90"]
 
-    def checkXML(self):
+    def runTest(self):
         file = self.getFile("backward.f90")
         sub = self.getSubprogram(file, "f")
         desc = self.getParamDescription(sub,"x")
         self.assertEqual(desc.getContent().strip(), "unused variable")
 
-class outofplace_f90_1(rtest.FortranTestCase):
+class outofplace_f90(rtest.FortranTestCase):
+    "Test out-of-place documentation."
     FILES = ["comments/outofplace.f90"]
-    def checkXML(self):
+
+    def test_nokeyword(self):
+        "Just function name is specified."
         file = self.getFile("outofplace.f90")
         # no keyword specified
         sub = self.getSubprogram(file, "f")
         desc = self.getBriefDescription(sub)
         self.assertEqual(desc.getContent().strip(), "no keyword function")
 
-class outofplace_f90_2(rtest.FortranTestCase):
-    FILES = ["comments/outofplace.f90"]
-
-    def checkXML(self):
+    def test_funckeyword(self):
+        "Function keyword is specified before the function name."
         file = self.getFile("outofplace.f90")
         # function keyword specified
         sub = self.getSubprogram(file, "f_proto")
@@ -32,10 +33,8 @@ class outofplace_f90_2(rtest.FortranTestCase):
         pdesc = self.getParamDescription(sub,"b")
         self.assertEqual(pdesc.getContent().strip(), "2nd parameter")
 
-class outofplace_f90_3(rtest.FortranTestCase):
-    FILES = ["comments/outofplace.f90"]
-    def checkXML(self):
-        file = self.getFile("outofplace.f90")
+    def test_modsubroutine(self):
+        "Module scope :: specified before subroutine name without the keyword."
         mod = self.getModule("outofplace_m")
         sub = self.getSubprogramPublic(mod, "s")
         desc = self.getBriefDescription(sub)
@@ -45,7 +44,7 @@ class inbody_f90(rtest.FortranTestCase):
     "In-body comments."
     FILES = ["comments/inbody.f90"]
 
-    def checkXML(self):
+    def runTest(self):
         file = self.getFile("inbody.f90")
         sub = self.getSubprogram(file, "inbody_test")
         desc = self.getInbodyDescription(sub)
