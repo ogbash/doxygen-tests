@@ -6,10 +6,12 @@ It requires Python 2.5 and python-libxml2.
 RUNNING TESTS
 =============
 In the root directory to run all Fortran tests or specific test:
+
     ./test.py fortran
     ./test.py fortran.blocks.interface_op_f90
 
 This runs the tests and cleans all input and output files. If you want to preserve and inspect the output files use -d <outdir> command line argument to supress temporary directory:
+
     ./test.py -d out --fg fortran.comments.outofplace_f90
 
 This directory is not cleaned (deleted) every time test is executed, so there may be false positives. You should clean it yourself when it is necessary.
