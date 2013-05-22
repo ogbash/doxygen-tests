@@ -15,6 +15,7 @@ end function f
 !!
 
 module outofplace_m
+  real(kind=8) :: v
 contains
   subroutine s()
   end subroutine s
@@ -23,3 +24,5 @@ end module outofplace_m
 !>
 !! \fn outofplace_m::s
 !! module subroutine
+!! \var outofplace_m::v
+!! module variable

@@ -10,7 +10,7 @@ class backward_f90(rtest.FortranTestCase):
         self.assertEqual(desc.getContent().strip(), "unused variable")
 
 class outofplace_f90(rtest.FortranTestCase):
-    "Test out-of-place documentation."
+    "Test out-of-place documentation. See bug 522489."
     FILES = ["comments/outofplace.f90"]
 
     def test_nokeyword(self):
@@ -39,6 +39,13 @@ class outofplace_f90(rtest.FortranTestCase):
         sub = self.getSubprogramPublic(mod, "s")
         desc = self.getBriefDescription(sub)
         self.assertEqual(desc.getContent().strip(), "module subroutine")
+
+    def test_modvar(self):
+        "Module variable"
+        mod = self.getModule("outofplace_m")
+        var = self.getModuleVariable(mod, "v")
+        desc = self.getBriefDescription(var)
+        self.assertEqual(desc.getContent().strip(), "module variable")
 
 class inbody_f90(rtest.FortranTestCase):
     "In-body comments."
